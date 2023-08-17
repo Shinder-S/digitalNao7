@@ -9,5 +9,5 @@ export class Book {
     name: string;
 
     @Column()
-    email: string;
+    author: string;
 }
