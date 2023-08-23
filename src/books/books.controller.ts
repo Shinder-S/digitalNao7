@@ -1,6 +1,8 @@
 import { Controller, Get, Post, Body, Param, Delete, Put } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './book.entity';
+import { ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse } from '@nestjs/swagger';
+import { BookSerializer } from './serializers/book.serializer';
 
 @Controller('books')
 export class BooksController {
@@ -25,6 +27,9 @@ export class BooksController {
 
     //Create book
     @Post()
+    @ApiCreatedResponse({ description : 'example' })
+    @ApiOkResponse({ type: BookSerializer, isArray: true })
+    @ApiInternalServerErrorResponse()
     async create(@Body() book: Book): Promise<Book> {
         return await this.booksService.create(book);
     }
