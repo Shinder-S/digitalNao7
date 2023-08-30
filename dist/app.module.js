@@ -13,6 +13,8 @@ const app_service_1 = require("./app.service");
 const books_module_1 = require("./books/books.module");
 const dist_1 = require("@nestjs/typeorm/dist");
 const config_1 = require("@nestjs/config");
+const auth_module_1 = require("./auth/auth.module");
+const users_module_1 = require("./users/users.module");
 let AppModule = exports.AppModule = class AppModule {
 };
 exports.AppModule = AppModule = __decorate([
@@ -29,7 +31,9 @@ exports.AppModule = AppModule = __decorate([
                 database: "megacorp",
                 entities: [__dirname + '/**/*.entity{.ts,.js}'],
                 synchronize: true,
-            })
+            }),
+            auth_module_1.AuthModule,
+            users_module_1.UsersModule
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

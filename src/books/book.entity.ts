@@ -1,17 +1,23 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from 'src/users/user.entity';
 
-@Entity()
+@Entity({ name: 'book'})
 export class Book {
-    @ApiProperty()
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ApiProperty()
     @Column()
     name: string;
 
-    @ApiProperty()
     @Column()
     author: string;
+
+    @Column({
+        type:'datetime',
+        default: () => 'CURRENT_TIMESTAMP'
+    })
+    arrivalDate: Date
+
+    @ManyToOne(() => User, user => user.booksReserved, {nullable: true})
+    reservedByUser: User
 }

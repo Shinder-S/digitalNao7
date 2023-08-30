@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { BooksModule } from './books/books.module';
 import { TypeOrmModule } from '@nestjs/typeorm/dist';
 import { ConfigModule } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -19,7 +21,9 @@ import { ConfigModule } from '@nestjs/config';
       database: "megacorp",
       entities: [__dirname + '/**/*.entity{.ts,.js}'],
       synchronize: true,
-    })
+    }),
+    AuthModule,
+    UsersModule
   ],
   controllers: [AppController],
   providers: [AppService],
