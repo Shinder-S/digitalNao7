@@ -1,3 +1,4 @@
+import { IsBoolean, IsEmail, IsNotEmpty } from "class-validator";
 import { Book } from "src/books/book.entity";
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 
@@ -5,10 +6,15 @@ import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 export class User {
     @PrimaryGeneratedColumn()
     id: number
+    
+    @Column({ unique: true })
+    @IsEmail()
+    @IsNotEmpty()
+    email: string
 
     @Column()
     userName: string
-    
+
     @Column()
     password: string
    
@@ -18,12 +24,7 @@ export class User {
     })
     createdAt: Date
 
-    @Column({
-        nullable: true
-    })
-    authStrategy: string
-
-    @OneToMany(() => Book, book => book.reservedByUser)
-    booksReserved: Book[]
-
+    @Column({ default: false })
+    @IsBoolean()
+    isAdmin: boolean;
 }

@@ -7,7 +7,7 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const config = new swagger_1.DocumentBuilder()
         .addBearerAuth()
-        .setTitle('books library')
+        .setTitle('Books Library')
         .setDescription('Save a new book, see the complete list and reserve one of our books')
         .setVersion('1.0')
         .addServer('http://localhost:3000/api/v1')

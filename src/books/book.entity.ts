@@ -1,5 +1,4 @@
 import { Entity, Column, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from 'src/users/user.entity';
 
 @Entity({ name: 'book'})
 export class Book {
@@ -18,6 +17,6 @@ export class Book {
     })
     arrivalDate: Date
 
-    @ManyToOne(() => User, user => user.booksReserved, {nullable: true})
-    reservedByUser: User
+    @Column({ default: false })
+    isReserved: boolean;
 }

@@ -1,42 +1,63 @@
-import { Injectable, HttpException } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { Injectable, HttpException, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt/dist';
-import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/users/user.entity';
-import { hash, compare } from 'bcrypt';
+import * as bcrypt from 'bcrypt';
+import { LoginAuthDto } from './dto/login-auth';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectRepository(User) private userRepository: Repository<User>,
-        private jwtAuthService:JwtService
+  constructor(
+    private readonly userService: UsersService,
+    private readonly jwtAuthService: JwtService
     ){}
 
-    async register(userObject: RegisterAuthDto){
-        const { password } = userObject;
-        const convertToHash = await hash(password, 10);
-        userObject = {...userObject, password:convertToHash};
-        const newUser = this.userRepository.create(userObject);
-        return this.userRepository.save(newUser);
+    async register({ userName, email, password }: LoginAuthDto) {
+      const user = await this.userService.findByEmail(email);
+
+      if(user) {
+        throw new BadRequestException('User already exists');
+      }
+
+      await this.userService.createUser({
+        userName: " ",
+        email,
+        password: await bcrypt.hash(password, 10),
+      });
+
+      return {
+        userName,
+        email,
+      };
     }
 
-    async login(userObjectLogin: LoginAuthDto) {
-        const {userName, password} = userObjectLogin;
-        console.log(userName)
-        const findUser = await this.userRepository.findOne({ where: {userName: userName } });
-        if(!findUser) throw new HttpException('Cannot find this user', 404);
-
-        const passwordCheck = await compare(password, findUser.password);
-        if(!passwordCheck) throw new HttpException('PASSWORD_INCORRECT', 403);
-
-        const payload = {id:findUser.id, userName:findUser.userName}
-        const token = await this.jwtAuthService.sign(payload)
-
-        const data = {
-            user: findUser,
-            token: token,
-        };
-
-        return data;
+    async validateUser(email: string, password: string): Promise<User | null> {
+      const user = await this.userService.findByEmail(email);
+      if (user && await bcrypt.compare(password, user.password)) {
+        return user;
+      }
+      return null;
     }
-}
+    
+    async login(loginAuthDto: LoginAuthDto) {
+      const user = await this.validateUser(
+        loginAuthDto.email,
+        loginAuthDto.password,
+        );
+        
+        if (!user) {
+          console.log('Invalid credentials');
+          return null;
+        }
+        
+        const payload = { email: user.email, sub: user.id }; 
+        const token = this.jwtAuthService.sign(payload);
+        console.log('Generated token:', token);
+        return { access_token: token };
+      }
+
+      async profile({ email, role}: { email:string; role: string }) {
+        return await this.userService.findByEmail(email);
+      }
+    }
+    

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Book } from './book.entity';
@@ -34,4 +34,22 @@ export class BooksService {
     async delete(id: number): Promise<void> {
         await this.booksRepository.delete(id);
     }
+
+    async reserveBook(id: number): Promise<Book | undefined> {
+        const book = await this.findOne(id);
+        if (book.isReserved) {
+          throw new ConflictException('Book is already reserved');
+        }
+        book.isReserved = true;
+        return this.booksRepository.save(book);
+      }
+      
+      async cancelReservation(id: number): Promise<Book | undefined> {
+        const book = await this.findOne(id);
+        if (!book.isReserved) {
+          throw new ConflictException('Book is not reserved');
+        }
+        book.isReserved = false;
+        return this.booksRepository.save(book);
+      }
 }

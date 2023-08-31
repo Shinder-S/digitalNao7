@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Patch, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './book.entity';
-import { ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { BookSerializer } from './serializers/book.serializer';
+import { ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/auth.guard';
 
 @ApiBearerAuth()
@@ -35,15 +34,14 @@ export class BooksController {
     //Create book
     @UseGuards(JwtAuthGuard)
     @Post()
-    @ApiCreatedResponse({ description : 'example' })
-    @ApiOkResponse({ type: BookSerializer, isArray: true })
+    @ApiCreatedResponse({ description : 'create a new book' })
     @ApiInternalServerErrorResponse()
     async create(@Body() book: Book): Promise<Book> {
         return await this.booksService.create(book);
     }
 
     //Update a book 
-    @Put(':id')
+    @Patch(':id')
     async update(@Param('id') id: number, @Body() book:Book): Promise<Book>{
         return this.booksService.update(id, book);
     }
@@ -57,4 +55,19 @@ export class BooksController {
         }
         return this.booksService.delete(id);
     }
+
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Reservar libro' })
+    @ApiResponse({ status: 200, description: 'Reservación creada.'})  
+    @Patch(':id/reserve')
+    async reserveBook(@Param('id') id: number): Promise<Book | undefined> {
+      return this.booksService.reserveBook(id);
+  }
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: 'Cancelar reservación' })
+    @ApiResponse({ status: 200, description: 'Reservación Cancelada.'}) 
+    @Patch(':id/cancel-reservation')
+    async cancelReservation(@Param('id') id: number): Promise<Book | undefined> {
+      return this.booksService.cancelReservation(id);
+  }
 }
