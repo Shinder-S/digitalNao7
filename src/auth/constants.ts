@@ -1,3 +1,3 @@
 export const jwtConstants = {
-    secret: 'PiscisRules',
+    secret: 'Do not use in production',
 };

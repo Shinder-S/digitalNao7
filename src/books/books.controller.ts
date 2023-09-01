@@ -2,7 +2,7 @@ import { Controller, Get, Post, Body, Param, Delete, Patch, UseGuards } from '@n
 import { BooksService } from './books.service';
 import { Book } from './book.entity';
 import { ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/auth.guard';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @ApiBearerAuth()
 @ApiTags('books')
@@ -11,7 +11,7 @@ export class BooksController {
     constructor(private readonly booksService:BooksService) {}
 
     //Get all books
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     @Get()
     @ApiResponse({ status: 201, description: 'This is our books available' })
     findAll(): Promise<Book[]>{
@@ -19,7 +19,7 @@ export class BooksController {
     }
 
     //Get one book
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     @Get(':id')
     @ApiResponse({ status: 201, description: 'Here is requested book available' })
     async findOne(@Param('id') id: number): Promise<Book>{
@@ -32,7 +32,7 @@ export class BooksController {
     }
 
     //Create book
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     @Post()
     @ApiCreatedResponse({ description : 'create a new book' })
     @ApiInternalServerErrorResponse()
@@ -56,14 +56,14 @@ export class BooksController {
         return this.booksService.delete(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Reservar libro' })
     @ApiResponse({ status: 200, description: 'Reservación creada.'})  
     @Patch(':id/reserve')
     async reserveBook(@Param('id') id: number): Promise<Book | undefined> {
       return this.booksService.reserveBook(id);
   }
-    @UseGuards(JwtAuthGuard)
+    @UseGuards(AuthGuard)
     @ApiOperation({ summary: 'Cancelar reservación' })
     @ApiResponse({ status: 200, description: 'Reservación Cancelada.'}) 
     @Patch(':id/cancel-reservation')

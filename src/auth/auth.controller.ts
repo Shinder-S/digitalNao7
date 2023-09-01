@@ -5,17 +5,21 @@ import {
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
-import { LoginAuthDto } from './dto/login-auth';
+import { LoginDto } from './dto/login-auth';
+import { RegisterDto } from './dto/register.dto';
 
-@ApiTags('users')
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authService: AuthService) {}
 
     @Post('login')
     @ApiResponse({ status: 201, description: 'User has been created' })
-    async login(@Body() loginDto: LoginAuthDto) {
-        const token = await this.authService.login(loginDto);
-        return { access_token: token };
+    login(@Body() loginDto: LoginDto) {
+        return this.authService.login(loginDto);
+    }
+
+    @Post("register")
+    register(@Body() registerDto: RegisterDto) {
+        return this.authService.register(registerDto);
     }
 }

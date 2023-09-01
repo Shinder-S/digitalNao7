@@ -1,6 +1,6 @@
-import { IsBoolean, IsEmail, IsNotEmpty } from "class-validator";
-import { Book } from "src/books/book.entity";
-import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { IsEmail, IsNotEmpty } from "class-validator";
+import { Role } from "src/common/enum/rol.enum";
+import { Entity, Column, PrimaryGeneratedColumn, DeleteDateColumn } from "typeorm";
 
 @Entity({ name: 'user' })
 export class User {
@@ -13,7 +13,7 @@ export class User {
     email: string
 
     @Column()
-    userName: string
+    name: string
 
     @Column()
     password: string
@@ -24,7 +24,9 @@ export class User {
     })
     createdAt: Date
 
-    @Column({ default: false })
-    @IsBoolean()
-    isAdmin: boolean;
+    @Column({ type: 'enum', default: Role.USER, enum: Role })
+    role: Role;
+  
+    @DeleteDateColumn()
+    deletedAt: Date;
 }
