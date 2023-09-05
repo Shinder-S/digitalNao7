@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Delete, Patch, UseGuards } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { Book } from './book.entity';
-import { ApiBearerAuth, ApiCreatedResponse, ApiInternalServerErrorResponse, ApiOkResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse, ApiInternalServerErrorResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @ApiBearerAuth()
@@ -34,20 +34,24 @@ export class BooksController {
     //Create book
     @UseGuards(AuthGuard)
     @Post()
-    @ApiCreatedResponse({ description : 'create a new book' })
+    @ApiResponse({ status:201, description : 'create a new book' })
     @ApiInternalServerErrorResponse()
     async create(@Body() book: Book): Promise<Book> {
         return await this.booksService.create(book);
     }
 
-    //Update a book 
+    //Update a book
+    @UseGuards(AuthGuard) 
     @Patch(':id')
+    @ApiResponse({ status:201, description : 'update a book' })
     async update(@Param('id') id: number, @Body() book:Book): Promise<Book>{
         return this.booksService.update(id, book);
     }
 
     //Delete book
+    @UseGuards(AuthGuard)
     @Delete(':id')
+    @ApiResponse({ status:201, description : 'Delete book' })
     async delete(@Param('id') id: number): Promise<void> {
         const book = await  this.booksService.findOne(id);
         if(!book){
@@ -57,7 +61,7 @@ export class BooksController {
     }
 
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Reservar libro' })
+    @ApiOperation({ summary: 'Reservar book' })
     @ApiResponse({ status: 200, description: 'Reservación creada.'})  
     @Patch(':id/reserve')
     async reserveBook(@Param('id') id: number): Promise<Book | undefined> {

@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Book } from 'src/books/book.entity';
  
 @Injectable()
 export class UsersService {
@@ -36,8 +37,10 @@ export class UsersService {
     return `This action returns a #${id} user`;
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto): Promise<UpdateUserDto> {
+    console.log(updateUserDto);
+    await this.userRepository.update(id, updateUserDto);
+    return this.userRepository.findOneOrFail({where : { id } });
   }
 
   remove(id: number) {

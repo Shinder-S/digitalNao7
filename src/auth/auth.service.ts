@@ -44,7 +44,7 @@ export class AuthService {
     }
 
     await this.userService.create({
-      userName: '',
+      name: '',
       email,
       password: await bcrypt.hash(password, 10),
     });

@@ -3,27 +3,27 @@ import { IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class BookDto{
     @IsNotEmpty()
-    @ApiProperty({description: 'Titulo del libro',})
+    @ApiProperty({description: 'Title book'})
     @IsString()
     title: string;
 
     @IsNotEmpty()
-    @ApiProperty({description: 'Nombre del autor',})
+    @ApiProperty({description: 'Name of author'})
     @IsString()
     author: string;
 
     @IsNotEmpty()
-    @ApiProperty({description: 'Editorial del libro',})
+    @ApiProperty({description: 'Edit a selected book'})
     @IsString()
     publisher: string;
 
     @IsOptional()
-    @ApiProperty({description: 'Descripción del libro',})
+    @ApiProperty({description: 'Description of book'})
     @IsString()
     description?: string;
 
     @IsOptional()
-    @ApiProperty({description: 'Fecha de publicación del libro',})
+    @ApiProperty({description: 'Date of published book'})
     @IsInt()
     publishedYear?: number;
 }
