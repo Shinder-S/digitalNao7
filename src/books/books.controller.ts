@@ -61,15 +61,15 @@ export class BooksController {
     }
 
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Reservar book' })
-    @ApiResponse({ status: 200, description: 'Reservación creada.'})  
+    @ApiOperation({ summary: 'Reserve book' })
+    @ApiResponse({ status: 200, description: 'Reserve created.'})  
     @Patch(':id/reserve')
     async reserveBook(@Param('id') id: number): Promise<Book | undefined> {
       return this.booksService.reserveBook(id);
   }
     @UseGuards(AuthGuard)
-    @ApiOperation({ summary: 'Cancelar reservación' })
-    @ApiResponse({ status: 200, description: 'Reservación Cancelada.'}) 
+    @ApiOperation({ summary: 'Cancel Reservation' })
+    @ApiResponse({ status: 200, description: 'Cancel Reservation.'}) 
     @Patch(':id/cancel-reservation')
     async cancelReservation(@Param('id') id: number): Promise<Book | undefined> {
       return this.booksService.cancelReservation(id);
